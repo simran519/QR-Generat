@@ -103,14 +103,14 @@ File Structure
 text
 qr-code-generator/
 │
-├── index.html              # Main application file
-├── README.md               # Project documentation
-├── screenshots/             # Screenshots folder
+├── index.html            
+├── README.md              
+├── screenshots/          
 │   ├── home.png
 │   ├── generator.png
 │   ├── profile.png
 │   └── templates.png
-└── assets/                  # (Optional) Additional assets
+└── assets/                  
     └── images/
 📖 Usage Guide
 1. Generate a Basic QR Code

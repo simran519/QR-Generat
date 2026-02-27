@@ -1,0 +1,3008 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>QR Code Generator – Create & Customise for Free</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Create custom QR codes for free. Generate dynamic QR codes for URLs, PDFs, images, social media, and more with real-time tracking.">
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- FontAwesome (icons) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0d6efd;
+            --primary-dark: #0b5ed7;
+            --gray: #6c757d;
+            --orange: #fd7e14;
+            --success: #198754;
+            --gradient-1: #667eea;
+            --gradient-2: #764ba2;
+        }
+
+        body {
+            font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        /* Navigation Styles */
+        .navbar {
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary) !important;
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+        
+        /* User Profile Dropdown */
+        #userProfile {
+            display: none;
+        }
+        
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: white;
+            min-width: 240px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+            border-radius: 16px;
+            padding: 0.5rem 0;
+            z-index: 1000;
+            animation: slideDown 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.08);
+        }
+        
+        .dropdown-content.show {
+            display: block;
+        }
+        
+        .dropdown-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 0.5rem;
+        }
+        
+        .dropdown-user-name {
+            font-weight: 700;
+            color: #212529;
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        .dropdown-user-email {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin: 0;
+        }
+        
+        .dropdown-item {
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            color: #495057;
+            font-size: 0.95rem;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa;
+            color: var(--primary);
+        }
+        
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .dropdown-item:hover i {
+            color: var(--primary);
+        }
+        
+        .dropdown-divider {
+            margin: 0.5rem 0;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .profile-btn:hover {
+            background: #e9ecef;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .profile-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-status {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            background: #51cf66;
+            border: 2px solid white;
+            border-radius: 50%;
+        }
+        
+        /* Login Modal Styles - Enhanced */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 1rem;
+        }
+
+        .login-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 480px;
+            overflow: hidden;
+            transform: translateY(-30px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .login-modal.active .login-container {
+            transform: translateY(0) scale(1);
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 100%);
+            padding: 2.5rem 2rem 2rem;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .login-header h2 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        .login-tabs {
+            display: flex;
+            background: #f8f9fa;
+            padding: 0.5rem;
+            margin: -1.5rem 2rem 0;
+            border-radius: 12px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .login-tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #6c757d;
+            border: none;
+            background: transparent;
+        }
+
+        .login-tab.active {
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .login-content {
+            padding: 2rem;
+        }
+
+        .login-form {
+            display: none;
+        }
+
+        .login-form.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            color: #495057;
+        }
+
+        .social-btn:hover {
+            background: #f8f9fa;
+            transform: translateY(-2px);
+            border-color: #dee2e6;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .social-btn.google { color: #DB4437; }
+        .social-btn.facebook { color: #4267B2; }
+        .social-btn.apple { color: #000; }
+
+        .divider {
+            text-align: center;
+            margin: 1.5rem 0;
+            position: relative;
+            color: #6c757d;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 42%;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+            transition: color 0.2s;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-check-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .form-check-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .form-check-label a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .forgot-password a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+            z-index: 10000;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            backdrop-filter: blur(4px);
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #842029;
+            border: 1px solid #f5c2c7;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Section Styles */
+        .header-bg {
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header-item-new {
+            transition: transform .2s, box-shadow .2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .header-item-new:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .header-img {
+            width: 22px;
+            height: 22px;
+        }
+
+        .header-img-question {
+            width: 20px;
+            height: 20px;
+        }
+
+        .header-arrow {
+            width: 28px;
+            height: 28px;
+            background: #f1f3f5;
+            transition: all 0.3s;
+        }
+
+        .header-item-new:hover .header-arrow {
+            background: var(--primary);
+        }
+        
+        .header-item-new:hover .header-arrow i {
+            color: white !important;
+        }
+
+        .header-text {
+            font-size: .95rem;
+            font-weight: 500;
+        }
+
+        .hero-img {
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .template-main-img {
+            bottom: 0;
+            transform: translateX(-50%);
+            transition: transform 0.3s ease;
+        }
+        
+        .header-item-new:hover .template-main-img {
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        .fade-logo-card img {
+            width: 140px;
+            animation: fadeSwitch 6s infinite;
+        }
+
+        .fade-logo-card img.second {
+            animation-delay: 3s;
+        }
+
+        @keyframes fadeSwitch {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
+
+        .new-btn {
+            font-size: .65rem;
+            border-radius: 4px;
+        }
+
+        /* Gradient Animation */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Tutorial Section Styles */
+        .pt-11 { padding-top: 4.5rem; }
+        .pb-10 { padding-bottom: 3.5rem; }
+        .pb-lg-9 { padding-bottom: 3rem; }
+        .pb-lg-0 { padding-bottom: 0; }
+        
+        .fs-24 { font-size: 1.5rem; }
+        .fs-20 { font-size: 1.25rem; }
+        
+        .text-grey { color: #6c757d; }
+        
+        .fw-500 { font-weight: 500; }
+        .fw-400 { font-weight: 400; }
+        
+        .object-cover { object-fit: cover; }
+        
+        /* Custom button styles */
+        .btn-tqrcg-success {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 0.375rem;
+            font-size: 1.125rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-tqrcg-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(33, 136, 56, 0.3);
+            color: white;
+        }
+        
+        .btn-primary-custom {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            border: none;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary-custom:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.3);
+        }
+        
+        /* Stepper middle content styles */
+        .stepper-middle-content {
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .stepper-middle-content div:first-child {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--primary);
+            z-index: 2;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+        }
+        
+        .stepper-middle-content div:last-child {
+            flex-grow: 1;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), #dee2e6);
+            margin-top: 10px;
+        }
+        
+        /* Remove line after last step */
+        .stepper-row:last-child .stepper-middle-content div:last-child {
+            display: none;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 30px;
+            padding: 4rem 2rem;
+            color: white;
+            margin: 4rem auto;
+            max-width: 1200px;
+        }
+        
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            height: 100%;
+            transition: all 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #f8f9fa;
+            padding: 4rem 0 2rem;
+            margin-top: 4rem;
+        }
+        
+        .footer-link {
+            color: #6c757d;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-link:hover {
+            color: var(--primary);
+        }
+        
+        /* ==================== */
+        /* PROFILE PAGE STYLES */
+        /* ==================== */
+        .profile-page {
+            display: none;
+            padding: 6rem 0 4rem;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+        }
+        
+        .profile-page.active {
+            display: block;
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            color: white;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+        }
+        
+        .profile-avatar-large {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+            font-weight: 700;
+            border: 4px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .profile-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .stat-label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .profile-content {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+        
+        .profile-nav {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 2px solid #e9ecef;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+        
+        .profile-nav-item {
+            padding: 1rem 1.5rem;
+            border: none;
+            background: none;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .profile-nav-item:hover {
+            color: var(--primary);
+        }
+        
+        .profile-nav-item.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .profile-section {
+            display: none;
+        }
+        
+        .profile-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .avatar-upload {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 2rem;
+        }
+        
+        .avatar-upload-preview {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            color: white;
+            font-weight: 700;
+            overflow: hidden;
+            border: 4px solid #e9ecef;
+        }
+        
+        .avatar-upload-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            color: white;
+            border: 3px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .avatar-upload-btn:hover {
+            transform: scale(1.1);
+            background: var(--primary-dark);
+        }
+        
+        /* ==================== */
+        /* TEMPLATES SECTION STYLES */
+        /* ==================== */
+        .templates-section {
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+            padding: 5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .templates-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(13, 110, 253, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .template-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            height: 100%;
+            border: 2px solid transparent;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(13, 110, 253, 0.15);
+            border-color: rgba(13, 110, 253, 0.2);
+        }
+        
+        .template-preview {
+            height: 220px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .template-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.3) 50%, transparent 70%);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .template-card:hover .template-preview::before {
+            transform: translateX(100%);
+        }
+        
+        .qr-placeholder {
+            width: 140px;
+            height: 140px;
+            background: white;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Different QR Styles for Templates */
+        .qr-style-business {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .qr-style-business::after {
+            content: 'B';
+            color: white;
+            font-size: 60px;
+            font-weight: bold;
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .qr-style-social {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .qr-style-social::after {
+            content: '\f099';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 50px;
+        }
+        
+        .qr-style-menu {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .qr-style-menu::after {
+            content: '\f2e7';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 50px;
+        }
+        
+        .qr-style-event {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        .qr-style-event::after {
+            content: '\f133';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 50px;
+        }
+        
+        .qr-style-wifi {
+            background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
+        }
+        
+        .qr-style-wifi::after {
+            content: '\f1eb';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 50px;
+        }
+        
+        .qr-style-payment {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        
+        .qr-style-payment::after {
+            content: '\f09d';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 50px;
+        }
+        
+        .qr-style-creative {
+            background: linear-gradient(135deg, #fc4a1a 0%, #f7b733 100%);
+        }
+        
+        .qr-style-creative::after {
+            content: '\f53f';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 50px;
+        }
+        
+        .qr-style-app {
+            background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%);
+        }
+        
+        .qr-style-app::after {
+            content: '\f3cd';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: white;
+            font-size: 50px;
+        }
+        
+        .template-info {
+            padding: 1.5rem;
+        }
+        
+        .template-category {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            background: rgba(13, 110, 253, 0.1);
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.75rem;
+        }
+        
+        .template-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #212529;
+        }
+        
+        .template-desc {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+        
+        .template-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .template-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        
+        .template-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+        
+        .badge-popular {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            color: white;
+        }
+        
+        .badge-new {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            color: white;
+        }
+        
+        .badge-pro {
+            background: linear-gradient(135deg, #ffd43b 0%, #fcc419 100%);
+            color: #212529;
+        }
+        
+        /* Template Filters */
+        .template-filters {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+        
+        .filter-btn {
+            padding: 0.6rem 1.25rem;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 50px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #495057;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Custom Template CTA */
+        .custom-template-cta {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 3rem;
+            text-align: center;
+            color: white;
+            margin-top: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .custom-template-cta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+        
+        .custom-template-cta h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .custom-template-cta p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 991.98px) {
+            .pt-5 {
+                padding-top: 2rem;
+            }
+            .pt-lg-0 {
+                padding-top: 0;
+            }
+            
+            .cta-title {
+                font-size: 2rem;
+            }
+            
+            .navbar-collapse {
+                background: white;
+                padding: 1rem;
+                border-radius: 15px;
+                box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+                margin-top: 1rem;
+            }
+            
+            .template-filters {
+                gap: 0.5rem;
+            }
+            
+            .filter-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .login-container {
+                max-width: 100%;
+                margin: 1rem;
+            }
+            
+            .profile-header {
+                padding: 2rem 1.5rem;
+            }
+            
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 992px) {
+            .stepper-row {
+                margin-bottom: 3rem !important;
+            }
+            
+            .stepper-row:last-child {
+                margin-bottom: 2rem !important;
+            }
+        }
+        
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+        }
+        
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+        }
+        
+        /* Animation for template cards */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .template-card:nth-child(1) { animation-delay: 0s; }
+        .template-card:nth-child(2) { animation-delay: 0.1s; }
+        .template-card:nth-child(3) { animation-delay: 0.2s; }
+        .template-card:nth-child(4) { animation-delay: 0.3s; }
+    </style>
+</head>
+
+<body>
+    <!-- Scroll to top button -->
+    <button class="scroll-top" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- NAVIGATION -->
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showHome()">
+                <i class="fas fa-qrcode me-2"></i>QRGenerator
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features" onclick="showHome()">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#templates" onclick="showHome()">Templates</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works" onclick="showHome()">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing" onclick="showHome()">Pricing</a>
+                    </li>
+                </ul>
+                
+                <!-- Auth Buttons / User Profile -->
+                <div class="ms-lg-3 mt-3 mt-lg-0 d-flex align-items-center gap-2" id="authButtons">
+                    <button class="btn btn-outline-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt me-2"></i>Log In
+                    </button>
+                    <button class="btn btn-primary-custom" id="signupBtn">
+                        <i class="fas fa-user-plus me-2"></i>Sign Up
+                    </button>
+                </div>
+                
+                <!-- User Profile (hidden by default) -->
+                <div class="profile-dropdown ms-lg-3 mt-3 mt-lg-0" id="userProfile" style="display: none;">
+                    <button class="profile-btn" id="profileBtn">
+                        <div class="profile-avatar" id="userAvatar">
+                            <span id="avatarInitial">U</span>
+                            <div class="profile-status"></div>
+                        </div>
+                        <span id="userName">User</span>
+                        <i class="fas fa-chevron-down ms-1"></i>
+                    </button>
+                    <div class="dropdown-content" id="profileDropdown">
+                        <div class="dropdown-header">
+                            <p class="dropdown-user-name" id="dropdownUserName">User Name</p>
+                            <p class="dropdown-user-email" id="dropdownUserEmail">user@example.com</p>
+                        </div>
+                        <div class="dropdown-item" onclick="showProfilePage()">
+                            <i class="fas fa-user"></i>
+                            <span>My Profile</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showDashboard()">
+                            <i class="fas fa-th-large"></i>
+                            <span>Dashboard</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showQRHistory()">
+                            <i class="fas fa-history"></i>
+                            <span>QR Code History</span>
+                        </div>
+                        <div class="dropdown-item" onclick="showAnalytics()">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Analytics</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" onclick="showSettings()">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="dropdown-item text-danger" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Log Out</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <div id="mainContent">
+        <!-- ANIMATED GRADIENT BACKGROUND FOR HERO -->
+        <div class="hero-img position-absolute top-0 start-0 w-100 h-100 z-n1" 
+             style="background: linear-gradient(-45deg, #43656b, #e3e1e1, #403939, #52c6a3);
+                    background-size: 400% 400%;
+                    animation: gradientShift 12s ease infinite;">
+        </div>
+        
+        <!-- AUTH MODAL (Login/Signup) -->
+        <div class="login-modal" id="authModal">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <div class="login-container">
+                <!-- Header -->
+                <div class="login-header">
+                    <h2 id="modalTitle">Welcome Back</h2>
+                    <p id="modalSubtitle">Sign in to continue creating amazing QR codes</p>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="login-tabs">
+                    <button class="login-tab active" data-tab="login" id="loginTab">Log In</button>
+                    <button class="login-tab" data-tab="signup" id="signupTab">Sign Up</button>
+                </div>
+                
+                <div class="login-content">
+                    <!-- Alert Messages -->
+                    <div class="alert alert-success" id="successAlert">
+                        <i class="fas fa-check-circle"></i>
+                        <span id="successMessage">Success!</span>
+                    </div>
+                    <div class="alert alert-error" id="errorAlert">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span id="errorMessage">Error!</span>
+                    </div>
+
+                    <!-- LOGIN FORM -->
+                    <div class="login-form active" id="loginForm">
+                        <div class="social-login">
+                            <button class="social-btn google" onclick="socialLogin('google')">
+                                <i class="fab fa-google"></i>
+                                <span class="d-none d-sm-inline">Google</span>
+                            </button>
+                            <button class="social-btn facebook" onclick="socialLogin('facebook')">
+                                <i class="fab fa-facebook-f"></i>
+                                <span class="d-none d-sm-inline">Facebook</span>
+                            </button>
+                            <button class="social-btn apple" onclick="socialLogin('apple')">
+                                <i class="fab fa-apple"></i>
+                                <span class="d-none d-sm-inline">Apple</span>
+                            </button>
+                        </div>
+                        
+                        <div class="divider">or continue with email</div>
+                        
+                        <form id="loginFormSubmit">
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="loginEmail" placeholder="name@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <div class="password-wrapper">
+                                    <input type="password" class="form-control" id="loginPassword" placeholder="Enter your password" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                            </div>
+                            <button type="submit" class="btn-login">
+                                <i class="fas fa-sign-in-alt me-2"></i>Log In
+                            </button>
+                        </form>
+                        
+                        <div class="forgot-password">
+                            <a href="#" onclick="showForgotPassword()">Forgot your password?</a>
+                        </div>
+                    </div>
+                    
+                    <!-- SIGNUP FORM -->
+                    <div class="login-form" id="signupForm">
+                        <div class="social-login">
+                            <button class="social-btn google" onclick="socialLogin('google')">
+                                <i class="fab fa-google"></i>
+                                <span class="d-none d-sm-inline">Google</span>
+                            </button>
+                            <button class="social-btn facebook" onclick="socialLogin('facebook')">
+                                <i class="fab fa-facebook-f"></i>
+                                <span class="d-none d-sm-inline">Facebook</span>
+                            </button>
+                            <button class="social-btn apple" onclick="socialLogin('apple')">
+                                <i class="fab fa-apple"></i>
+                                <span class="d-none d-sm-inline">Apple</span>
+                            </button>
+                        </div>
+                        
+                        <div class="divider">or sign up with email</div>
+                        
+                        <form id="signupFormSubmit">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="signupName" placeholder="John Doe" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="signupEmail" placeholder="name@example.com" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <div class="password-wrapper">
+                                    <input type="password" class="form-control" id="signupPassword" placeholder="Create a strong password" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('signupPassword')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                <small class="text-muted" style="font-size: 0.8rem;">Must be at least 8 characters</small>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm Password</label>
+                                <div class="password-wrapper">
+                                    <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                                    <button type="button" class="password-toggle" onclick="togglePassword('signupConfirmPassword')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="termsCheck" required>
+                                <label class="form-check-label" for="termsCheck">
+                                    I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn-login">
+                                <i class="fas fa-user-plus me-2"></i>Create Account
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- FORGOT PASSWORD FORM -->
+                    <div class="login-form" id="forgotForm">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-lock-open fa-3x text-primary mb-3"></i>
+                            <h4>Reset Password</h4>
+                            <p class="text-muted">Enter your email and we'll send you a reset link</p>
+                        </div>
+                        <form id="forgotFormSubmit">
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="forgotEmail" placeholder="name@example.com" required>
+                            </div>
+                            <button type="submit" class="btn-login">
+                                <i class="fas fa-paper-plane me-2"></i>Send Reset Link
+                            </button>
+                            <div class="text-center mt-3">
+                                <a href="#" onclick="showLogin()" class="text-primary">Back to login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HERO SECTION -->
+        <section class="header-bg position-relative d-flex align-items-center pt-5">
+            <div class="container z-1 pt-5">
+                <!-- HEADING -->
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center mb-5">
+                        <h1 class="text-dark mb-3 display-4 fw-bold">
+                            Create &amp; Customize<br>
+                            Your Dynamic
+                            <span class="">QR Code for</span> <span class="text-primary">FREE</span>
+                        </h1>
+                        <p class="text-gray fs-5 mb-4">
+                            Easily generate, manage and statistically
+                            <span class="fw-bold">track your QR codes</span> in real-time
+                        </p>
+                        <div class="d-flex justify-content-center gap-3 mb-5">
+                            <a href="#templates" class="btn btn-primary-custom px-4 py-3">
+                                <i class="fas fa-bolt me-2"></i>Get Started Free
+                            </a>
+                            <a href="#features" class="btn btn-outline-primary px-4 py-3">
+                                <i class="fas fa-play-circle me-2"></i>Watch Demo
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW MORE BUTTON -->
+                <div class="row mt-5">
+                    <div class="col-12 text-center">
+                        <button class="btn btn-outline-primary px-4 py-2" id="viewMoreBtn">
+                            <i class="fas fa-chevron-down me-2"></i>View All QR Code Types
+                            <i class="fas fa-chevron-down ms-2"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FEATURES SECTION -->
+        <section id="features" class="py-5 bg-light">
+            <div class="container py-5">
+                <div class="row mb-5">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <h2 class="display-5 fw-bold mb-3">Why Choose Our QR Generator?</h2>
+                        <p class="text-muted fs-5">Professional features for businesses of all sizes</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line text-white"></i>
+                            </div>
+                            <h4>Real-time Analytics</h4>
+                            <p class="text-muted">Track scans, locations, devices, and time of day for better insights.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-paint-brush text-white"></i>
+                            </div>
+                            <h4>Custom Design</h4>
+                            <p class="text-muted">Fully customizable colors, logos, frames, and styles to match your brand.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card">
+                            <div class="feature-icon">
+                                <i class="fas fa-sync-alt text-white"></i>
+                            </div>
+                            <h4>Dynamic QR Codes</h4>
+                            <p class="text-muted">Edit content anytime without regenerating the QR code.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TEMPLATES SECTION -->
+        <section id="templates" class="templates-section">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <span class="badge bg-primary mb-3 px-3 py-2 rounded-pill">Professional Designs</span>
+                        <h2 class="display-5 fw-bold mb-3">Choose Your QR Code Template</h2>
+                        <p class="text-muted fs-5">Start with a professionally designed template and customize it to match your brand</p>
+                    </div>
+                </div>
+                
+                <!-- Template Filters -->
+                <div class="template-filters">
+                    <button class="filter-btn active" data-filter="all">All Templates</button>
+                    <button class="filter-btn" data-filter="business">Business</button>
+                    <button class="filter-btn" data-filter="social">Social Media</button>
+                    <button class="filter-btn" data-filter="hospitality">Hospitality</button>
+                    <button class="filter-btn" data-filter="events">Events</button>
+                    <button class="filter-btn" data-filter="utility">Utility</button>
+                </div>
+                
+                <!-- Templates Grid -->
+                <div class="row g-4" id="templatesGrid">
+                    <!-- Business Card Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="business">
+                        <div class="template-card" onclick="selectTemplate('business')">
+                            <span class="template-badge badge-popular">Popular</span>
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-business"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Business</span>
+                                <h3 class="template-title">Digital Business Card</h3>
+                                <p class="template-desc">Share contact info instantly with a scannable vCard QR code.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-user"></i> vCard</span>
+                                    <span><i class="fas fa-palette"></i> 12 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="social">
+                        <div class="template-card" onclick="selectTemplate('social')">
+                            <span class="template-badge badge-new">New</span>
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-social"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Social</span>
+                                <h3 class="template-title">Social Media Hub</h3>
+                                <p class="template-desc">Link to all your social profiles in one beautiful QR code.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-share-alt"></i> Multi-link</span>
+                                    <span><i class="fas fa-palette"></i> 8 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Restaurant Menu Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="hospitality">
+                        <div class="template-card" onclick="selectTemplate('menu')">
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-menu"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Hospitality</span>
+                                <h3 class="template-title">Digital Menu</h3>
+                                <p class="template-desc">Contactless menus for restaurants, cafes, and bars.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-utensils"></i> PDF/URL</span>
+                                    <span><i class="fas fa-palette"></i> 15 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Event Ticket Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="events">
+                        <div class="template-card" onclick="selectTemplate('event')">
+                            <span class="template-badge badge-pro">Pro</span>
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-event"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Events</span>
+                                <h3 class="template-title">Event Pass</h3>
+                                <p class="template-desc">Ticketing and check-in solution for events and conferences.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-ticket-alt"></i> Dynamic</span>
+                                    <span><i class="fas fa-palette"></i> 10 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- WiFi Access Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="utility">
+                        <div class="template-card" onclick="selectTemplate('wifi')">
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-wifi"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Utility</span>
+                                <h3 class="template-title">WiFi Access</h3>
+                                <p class="template-desc">Let guests connect to WiFi instantly without typing passwords.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-wifi"></i> Network</span>
+                                    <span><i class="fas fa-palette"></i> 6 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Payment Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="business">
+                        <div class="template-card" onclick="selectTemplate('payment')">
+                            <span class="template-badge badge-popular">Trending</span>
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-payment"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Business</span>
+                                <h3 class="template-title">Payment Code</h3>
+                                <p class="template-desc">Accept payments via PayPal, Venmo, or crypto wallets.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-credit-card"></i> Payment</span>
+                                    <span><i class="fas fa-palette"></i> 9 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Creative Portfolio Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="social">
+                        <div class="template-card" onclick="selectTemplate('portfolio')">
+                            <span class="template-badge badge-new">New</span>
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-creative"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Creative</span>
+                                <h3 class="template-title">Artist Portfolio</h3>
+                                <p class="template-desc">Showcase your work with image gallery QR codes.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-images"></i> Gallery</span>
+                                    <span><i class="fas fa-palette"></i> 14 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- App Download Template -->
+                    <div class="col-lg-3 col-md-6 template-item" data-category="utility">
+                        <div class="template-card" onclick="selectTemplate('app')">
+                            <div class="template-preview">
+                                <div class="qr-placeholder qr-style-app"></div>
+                            </div>
+                            <div class="template-info">
+                                <span class="template-category">Utility</span>
+                                <h3 class="template-title">App Download</h3>
+                                <p class="template-desc">Smart links to App Store or Google Play based on device.</p>
+                                <div class="template-meta">
+                                    <span><i class="fas fa-mobile-alt"></i> App</span>
+                                    <span><i class="fas fa-palette"></i> 11 styles</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Custom Template CTA -->
+                <div class="custom-template-cta">
+                    <h3><i class="fas fa-magic me-2"></i>Can't find what you need?</h3>
+                    <p>Create a fully custom QR code from scratch with our advanced designer. Add your logo, choose custom colors, and create unique shapes.</p>
+                    <button class="btn btn-light btn-lg px-5 fw-bold" onclick="openAuthModal('signup')">
+                        <i class="fas fa-wand-magic-sparkles me-2"></i>Create Custom Design
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- TUTORIAL SECTION -->
+        <section id="how-it-works" class="pt-11 pb-10 pb-lg-9 position-relative mx-auto" style="z-index: 1;">
+            <div class="container">
+                <div class="row mb-5">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <h2 class="display-5 fw-bold mb-3">How to create a free QR Code in 3 simple steps</h2>
+                        <p class="text-muted fs-5">No coding skills required. Start in seconds.</p>
+                    </div>
+                </div>
+                
+                <!-- Step 1 -->
+                <div class="stepper-row row justify-content-center mx-0 mx-auto" style="max-width:fit-content;">
+                    <div class="col-lg-5 stepper-left-content d-flex flex-column justify-content-start mb-0">
+                        <div class="pt-5 pt-lg-0">
+                            <img class="w-100 h-100 object-cover rounded-3 shadow" 
+                                 src="https://www.the-qrcode-generator.com/wp-content/themes/tqrcg/img/homepage/homepage-step-1.webp" 
+                                 alt="Choose the QR Code type">
+                        </div>
+                    </div>
+                    <div class="d-none d-lg-flex col-lg-1 ms-4 me-2 stepper-middle-content">
+                        <div>1</div>
+                        <div></div>
+                    </div>
+                    <div class="col-lg-5 stepper-right-content d-flex flex-column justify-content-start mb-2 mb-lg-auto">
+                        <div>
+                            <h3 class="fs-24 pt-0 mb-2 d-flex">
+                                <span class="d-block d-lg-none me-2">1. </span>Choose your QR Code type
+                            </h3>
+                            <p class="fs-20 text-grey">
+                                Choose your QR Code type (static or dynamic) based on what you want it to do: open a URL, share a PDF, display a menu, share contact details, and more.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="stepper-row row justify-content-center mx-0 mx-auto" style="max-width:fit-content;">
+                    <div class="col-lg-5 stepper-left-content d-flex flex-column justify-content-start mb-0">
+                        <div class="text-start text-lg-end">
+                            <h3 class="fs-24 pt-0 mb-2 d-flex d-lg-block">
+                                <span class="d-block d-lg-none me-2">2. </span>Customize it your way
+                            </h3>
+                            <p class="fs-20 text-grey">
+                                Add your details, change the color, style your QR Code, add a logo, and test it in real time before downloading.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="d-none d-lg-flex col-lg-1 ms-4 me-2 stepper-middle-content">
+                        <div>2</div>
+                        <div></div>
+                    </div>
+                    <div class="col-lg-5 stepper-right-content d-flex flex-column justify-content-start mb-2 mb-lg-auto">
+                        <div class="pt-5 pt-lg-0">
+                            <img class="w-100 h-100 object-cover rounded-3 shadow" 
+                                 src="https://www.the-qrcode-generator.com/wp-content/themes/tqrcg/img/homepage/homepage-step-2.webp" 
+                                 alt="Add details and customize">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="stepper-row row justify-content-center mx-0 mx-auto" style="max-width:fit-content;">
+                    <div class="col-lg-5 stepper-left-content d-flex flex-column justify-content-start mb-0">
+                        <div class="pt-5 pt-lg-0">
+                            <img class="w-100 h-100 object-cover rounded-3 shadow" 
+                                 src="https://www.the-qrcode-generator.com/wp-content/themes/tqrcg/img/homepage/homepage-step-3.webp" 
+                                 alt="Select file format and download">
+                        </div>
+                    </div>
+                    <div class="d-none d-lg-flex col-lg-1 ms-4 me-2 stepper-middle-content">
+                        <div>3</div>
+                        <div></div>
+                    </div>
+                    <div class="col-lg-5 stepper-right-content d-flex flex-column justify-content-start mb-2 mb-lg-auto">
+                        <div>
+                            <h3 class="fs-24 pt-0 mb-2 d-flex">
+                                <span class="d-block d-lg-none me-2">3. </span>Download &amp; share
+                            </h3>
+                            <p class="fs-20 text-grey">
+                                Pick PNG, or SVG format, hit download, and you're all set to share it anywhere!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CTA -->
+                <div class="row mt-5">
+                    <div class="col-12 text-center">
+                        <a href="index.html" class="btn btn-primary-custom px-5 py-3 fs-5">
+                            <i class="fas fa-play me-2"></i>Create Your First QR Code Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="container my-5">
+            <div class="cta-section">
+                <div class="row">
+                    <div class="col-lg-8 mx-auto text-center">
+                        <h2 class="cta-title">Ready to Generate Your QR Code?</h2>
+                        <p class="cta-subtitle">Join over 500,000+ businesses using our platform to create professional QR codes</p>
+                        <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
+                            <a href="#templates" class="btn btn-light btn-lg px-5 py-3 fw-bold">
+                                <i class="fas fa-rocket me-2"></i>Start Free Trial
+                            </a>
+                            <a href="#" class="btn btn-outline-light btn-lg px-5 py-3">
+                                <i class="fas fa-calendar me-2"></i>Book a Demo
+                            </a>
+                        </div>
+                        <p class="mt-4 opacity-75">No credit card required • Free forever plan available</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <h4 class="fw-bold mb-3"><i class="fas fa-qrcode me-2 text-primary"></i>QRGenerator</h4>
+                        <p class="text-muted">Create professional QR codes for your business. Track scans, customize designs, and manage all your codes in one place.</p>
+                        <div class="d-flex gap-3 mt-3">
+                            <a href="#" class="text-muted fs-5"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="text-muted fs-5"><i class="fab fa-facebook"></i></a>
+                            <a href="#" class="text-muted fs-5"><i class="fab fa-instagram"></i></a>
+                            <a href="#" class="text-muted fs-5"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <h6 class="fw-bold mb-3">Product</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#features" class="footer-link">Features</a></li>
+                            <li class="mb-2"><a href="#templates" class="footer-link">Templates</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Pricing</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">API</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <h6 class="fw-bold mb-3">Resources</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" class="footer-link">Blog</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Help Center</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Tutorials</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Examples</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <h6 class="fw-bold mb-3">Company</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" class="footer-link">About</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Careers</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Contact</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Partners</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-4">
+                        <h6 class="fw-bold mb-3">Legal</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="#" class="footer-link">Privacy</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Terms</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Security</a></li>
+                            <li class="mb-2"><a href="#" class="footer-link">Cookies</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <hr class="my-4">
+                <div class="row align-items-center">
+                    <div class="col-md-6 text-center text-md-start">
+                        <p class="text-muted mb-0">&copy; 2026 QRGenerator. All rights reserved.</p>
+                    </div>
+                    <div class="col-md-6 text-center text-md-end">
+                        <p class="text-muted mb-0">Made with <i class="fas fa-heart text-danger"></i> for businesses worldwide</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- PROFILE PAGE (Hidden by default) -->
+    <div class="profile-page" id="profilePage">
+        <div class="container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center gap-4 mb-3">
+                            <div class="profile-avatar-large" id="profileAvatarLarge">
+                                <span id="profileAvatarInitial">U</span>
+                            </div>
+                            <div>
+                                <h2 class="mb-1" id="profileName">User Name</h2>
+                                <p class="mb-0 opacity-75" id="profileEmail">user@example.com</p>
+                                <span class="badge bg-light text-dark mt-2">
+                                    <i class="fas fa-check-circle text-success me-1"></i>Free Plan
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                        <button class="btn btn-light" onclick="showHome()">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Home
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Profile Stats -->
+                <div class="profile-stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="statQRCodes">0</div>
+                        <div class="stat-label">QR Codes Created</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statScans">0</div>
+                        <div class="stat-label">Total Scans</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statTemplates">0</div>
+                        <div class="stat-label">Templates Used</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="statDays">1</div>
+                        <div class="stat-label">Days Active</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="profile-content">
+                <!-- Profile Navigation -->
+                <div class="profile-nav">
+                    <button class="profile-nav-item active" onclick="showProfileSection('overview')">Overview</button>
+                    <button class="profile-nav-item" onclick="showProfileSection('edit')">Edit Profile</button>
+                    <button class="profile-nav-item" onclick="showProfileSection('security')">Security</button>
+                    <button class="profile-nav-item" onclick="showProfileSection('activity')">Activity</button>
+                </div>
+
+                <!-- Overview Section -->
+                <div class="profile-section active" id="section-overview">
+                    <h4 class="mb-4">Profile Overview</h4>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">Full Name</h6>
+                                    <p class="mb-0 fw-bold" id="overviewName">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">Email Address</h6>
+                                    <p class="mb-0 fw-bold" id="overviewEmail">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">Member Since</h6>
+                                    <p class="mb-0 fw-bold" id="overviewJoined">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 bg-light">
+                                <div class="card-body">
+                                    <h6 class="text-muted mb-2">Account Type</h6>
+                                    <p class="mb-0 fw-bold">Free Plan</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h5 class="mb-3">Recent Activity</h5>
+                        <div class="list-group" id="activityList">
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-user-plus text-primary me-2"></i>
+                                    Account created
+                                </div>
+                                <span class="text-muted small" id="activityJoined">Just now</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-check-circle text-success me-2"></i>
+                                    Email verified
+                                </div>
+                                <span class="text-muted small">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Edit Profile Section -->
+                <div class="profile-section" id="section-edit">
+                    <h4 class="mb-4">Edit Profile</h4>
+                    <form id="editProfileForm">
+                        <div class="avatar-upload">
+                            <div class="avatar-upload-preview" id="avatarPreview">
+                                <span id="editAvatarInitial">U</span>
+                            </div>
+                            <label class="avatar-upload-btn" title="Change Photo">
+                                <i class="fas fa-camera"></i>
+                                <input type="file" accept="image/*" style="display: none;" onchange="previewImage(event)">
+                            </label>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="editName" placeholder="Your full name">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="editEmail" placeholder="your@email.com" readonly>
+                                <small class="text-muted">Email cannot be changed</small>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Company/Organization</label>
+                                <input type="text" class="form-control" id="editCompany" placeholder="Company name (optional)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="editPhone" placeholder="+1 (555) 000-0000">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Bio</label>
+                            <textarea class="form-control" id="editBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                        </div>
+                        
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary-custom">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary" onclick="resetProfileForm()">
+                                <i class="fas fa-undo me-2"></i>Reset
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Security Section -->
+                <div class="profile-section" id="section-security">
+                    <h4 class="mb-4">Security Settings</h4>
+                    <div class="card border-0 bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">Change Password</h5>
+                            <form id="changePasswordForm">
+                                <div class="form-group">
+                                    <label class="form-label">Current Password</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" class="form-control" id="currentPassword" placeholder="Enter current password" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('currentPassword')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('newPassword')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <div class="password-wrapper">
+                                        <input type="password" class="form-control" id="confirmNewPassword" placeholder="Confirm new password" required>
+                                        <button type="button" class="password-toggle" onclick="togglePassword('confirmNewPassword')">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary-custom">
+                                    <i class="fas fa-key me-2"></i>Update Password
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card border-0 bg-light">
+                        <div class="card-body">
+                            <h5 class="mb-3">Two-Factor Authentication</h5>
+                            <p class="text-muted">Add an extra layer of security to your account</p>
+                            <button class="btn btn-outline-primary" onclick="showToast('2FA setup coming soon!', 'info')">
+                                <i class="fas fa-shield-alt me-2"></i>Enable 2FA
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Section -->
+                <div class="profile-section" id="section-activity">
+                    <h4 class="mb-4">Account Activity</h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Action</th>
+                                    <th>Date & Time</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activityTable">
+                                <tr>
+                                    <td><i class="fas fa-sign-in-alt text-primary me-2"></i>Account login</td>
+                                    <td id="activityLoginTime">Just now</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                                <tr>
+                                    <td><i class="fas fa-user-plus text-success me-2"></i>Profile created</td>
+                                    <td id="activityCreateTime">Just now</td>
+                                    <td><span class="badge bg-success">Success</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- AUTHENTICATION & UI SCRIPT -->
+    <script>
+        // ====================
+        // GLOBAL VARIABLES
+        // ====================
+        let currentUser = null;
+        let userStats = {
+            qrCodes: 0,
+            scans: 0,
+            templates: 0,
+            joined: null
+        };
+
+        // ====================
+        // INITIALIZATION
+        // ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check for existing session
+            const savedUser = localStorage.getItem('qrUser');
+            const savedStats = localStorage.getItem('qrUserStats');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                if (savedStats) {
+                    userStats = JSON.parse(savedStats);
+                } else {
+                    initializeUserStats();
+                }
+                updateUIForLoggedInUser();
+            }
+            
+            initializeEventListeners();
+        });
+
+        function initializeUserStats() {
+            userStats = {
+                qrCodes: 0,
+                scans: 0,
+                templates: 0,
+                joined: new Date().toISOString()
+            };
+            saveUserStats();
+        }
+
+        function saveUserStats() {
+            localStorage.setItem('qrUserStats', JSON.stringify(userStats));
+        }
+
+        // ====================
+        // EVENT LISTENERS
+        // ====================
+        function initializeEventListeners() {
+            // Auth modal triggers
+            document.getElementById('loginBtn').addEventListener('click', () => openAuthModal('login'));
+            document.getElementById('signupBtn').addEventListener('click', () => openAuthModal('signup'));
+            document.getElementById('closeModal').addEventListener('click', closeAuthModal);
+            
+            // Tab switching
+            document.getElementById('loginTab').addEventListener('click', () => switchAuthTab('login'));
+            document.getElementById('signupTab').addEventListener('click', () => switchAuthTab('signup'));
+            
+            // Modal close events
+            document.getElementById('authModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('authModal')) closeAuthModal();
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') closeAuthModal();
+            });
+            
+            // Form submissions
+            document.getElementById('loginFormSubmit').addEventListener('submit', handleLogin);
+            document.getElementById('signupFormSubmit').addEventListener('submit', handleSignup);
+            document.getElementById('forgotFormSubmit').addEventListener('submit', handleForgotPassword);
+            document.getElementById('editProfileForm').addEventListener('submit', handleProfileUpdate);
+            document.getElementById('changePasswordForm').addEventListener('submit', handlePasswordChange);
+            
+            // Profile dropdown
+            document.getElementById('profileBtn').addEventListener('click', (e) => {
+                e.stopPropagation();
+                document.getElementById('profileDropdown').classList.toggle('show');
+            });
+            
+            document.addEventListener('click', () => {
+                document.getElementById('profileDropdown').classList.remove('show');
+            });
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            
+            // Scroll effects
+            window.addEventListener('scroll', handleScroll);
+            document.getElementById('scrollTop').addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // View more button
+            document.getElementById('viewMoreBtn').addEventListener('click', () => {
+                document.getElementById('templates').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            // Template filters
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', filterTemplates);
+            });
+        }
+
+        // ====================
+        // AUTH MODAL FUNCTIONS
+        // ====================
+        function openAuthModal(tab = 'login') {
+            const modal = document.getElementById('authModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            switchAuthTab(tab);
+            
+            // Update header text
+            const title = document.getElementById('modalTitle');
+            const subtitle = document.getElementById('modalSubtitle');
+            
+            if (tab === 'login') {
+                title.textContent = 'Welcome Back';
+                subtitle.textContent = 'Sign in to continue creating amazing QR codes';
+            } else if (tab === 'signup') {
+                title.textContent = 'Create Account';
+                subtitle.textContent = 'Join thousands of businesses using QRGenerator';
+            }
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            clearAlerts();
+        }
+
+        function switchAuthTab(tab) {
+            document.querySelectorAll('.login-tab').forEach(t => {
+                t.classList.toggle('active', t.dataset.tab === tab);
+            });
+            
+            document.querySelectorAll('.login-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            
+            if (tab === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+            } else if (tab === 'signup') {
+                document.getElementById('signupForm').classList.add('active');
+            } else if (tab === 'forgot') {
+                document.getElementById('forgotForm').classList.add('active');
+            }
+        }
+
+        // ====================
+        // AUTHENTICATION HANDLERS
+        // ====================
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters');
+                return;
+            }
+            
+            simulateAuthRequest(() => {
+                // Check if user exists (for demo, we'll create if not)
+                let user = JSON.parse(localStorage.getItem('qrUser_' + email));
+                
+                if (!user) {
+                    // Create new user if not exists
+                    user = createUserProfile(email, email.split('@')[0]);
+                }
+                
+                currentUser = user;
+                
+                // Load or initialize stats
+                const savedStats = localStorage.getItem('qrUserStats_' + email);
+                if (savedStats) {
+                    userStats = JSON.parse(savedStats);
+                } else {
+                    initializeUserStats();
+                    // Save stats with email key
+                    localStorage.setItem('qrUserStats_' + email, JSON.stringify(userStats));
+                }
+                
+                saveUserSession(rememberMe);
+                updateUIForLoggedInUser();
+                closeAuthModal();
+                showSuccess(`Welcome back, ${currentUser.name}!`);
+                
+                e.target.reset();
+            });
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+            
+            if (name.length < 2) {
+                showError('Please enter your full name');
+                return;
+            }
+            
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            if (password.length < 8) {
+                showError('Password must be at least 8 characters');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                showError('Passwords do not match');
+                return;
+            }
+            
+            if (!document.getElementById('termsCheck').checked) {
+                showError('Please accept the Terms of Service');
+                return;
+            }
+            
+            simulateAuthRequest(() => {
+                // Create new user profile
+                currentUser = createUserProfile(email, name);
+                initializeUserStats();
+                
+                // Save user-specific data
+                localStorage.setItem('qrUser_' + email, JSON.stringify(currentUser));
+                localStorage.setItem('qrUserStats_' + email, JSON.stringify(userStats));
+                
+                saveUserSession(false);
+                updateUIForLoggedInUser();
+                closeAuthModal();
+                showSuccess('Account created successfully! Welcome to QRGenerator.');
+                
+                // Show profile page for new users
+                setTimeout(() => showProfilePage(), 1000);
+                
+                e.target.reset();
+            });
+        }
+
+        function createUserProfile(email, name) {
+            const now = new Date();
+            return {
+                id: 'user_' + Date.now(),
+                name: name,
+                email: email,
+                avatar: name.charAt(0).toUpperCase(),
+                company: '',
+                phone: '',
+                bio: '',
+                joined: now.toISOString(),
+                lastLogin: now.toISOString(),
+                plan: 'free',
+                verified: true,
+                settings: {
+                    notifications: true,
+                    newsletter: true
+                }
+            };
+        }
+
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value;
+            
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+            
+            simulateAuthRequest(() => {
+                showSuccess('Password reset link sent! Check your email.');
+                setTimeout(() => switchAuthTab('login'), 2000);
+            });
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            localStorage.removeItem('qrUser');
+            sessionStorage.removeItem('qrUser');
+            
+            document.getElementById('authButtons').style.display = 'flex';
+            document.getElementById('userProfile').style.display = 'none';
+            document.getElementById('profileDropdown').classList.remove('show');
+            
+            showHome();
+            showSuccess('You have been logged out successfully');
+        }
+
+        function socialLogin(provider) {
+            simulateAuthRequest(() => {
+                const names = {
+                    'google': 'Google User',
+                    'facebook': 'Facebook User',
+                    'apple': 'Apple User'
+                };
+                
+                const email = `user_${Date.now()}@${provider}.com`;
+                currentUser = createUserProfile(email, names[provider]);
+                currentUser.provider = provider;
+                
+                initializeUserStats();
+                
+                localStorage.setItem('qrUser_' + email, JSON.stringify(currentUser));
+                localStorage.setItem('qrUserStats_' + email, JSON.stringify(userStats));
+                
+                saveUserSession(false);
+                updateUIForLoggedInUser();
+                closeAuthModal();
+                showSuccess(`Successfully signed in with ${provider.charAt(0).toUpperCase() + provider.slice(1)}!`);
+            });
+        }
+
+        // ====================
+        // PROFILE MANAGEMENT
+        // ====================
+        function handleProfileUpdate(e) {
+            e.preventDefault();
+            
+            if (!currentUser) return;
+            
+            currentUser.name = document.getElementById('editName').value;
+            currentUser.company = document.getElementById('editCompany').value;
+            currentUser.phone = document.getElementById('editPhone').value;
+            currentUser.bio = document.getElementById('editBio').value;
+            
+            // Save to email-specific key
+            localStorage.setItem('qrUser_' + currentUser.email, JSON.stringify(currentUser));
+            saveUserSession(true);
+            
+            updateUIForLoggedInUser();
+            updateProfilePage();
+            showSuccess('Profile updated successfully!');
+        }
+
+        function handlePasswordChange(e) {
+            e.preventDefault();
+            
+            const current = document.getElementById('currentPassword').value;
+            const newPass = document.getElementById('newPassword').value;
+            const confirm = document.getElementById('confirmNewPassword').value;
+            
+            if (newPass !== confirm) {
+                showError('New passwords do not match');
+                return;
+            }
+            
+            if (newPass.length < 8) {
+                showError('Password must be at least 8 characters');
+                return;
+            }
+            
+            simulateAuthRequest(() => {
+                showSuccess('Password updated successfully!');
+                e.target.reset();
+            });
+        }
+
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('avatarPreview');
+                    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    currentUser.avatarUrl = e.target.result;
+                    currentUser.avatar = ''; // Clear initial
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // ====================
+        // UI UPDATES
+        // ====================
+        function updateUIForLoggedInUser() {
+            // Hide auth buttons, show profile
+            document.getElementById('authButtons').style.display = 'none';
+            document.getElementById('userProfile').style.display = 'block';
+            
+            // Update navbar
+            const avatarInitial = document.getElementById('avatarInitial');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
+            const dropdownUserName = document.getElementById('dropdownUserName');
+            const dropdownUserEmail = document.getElementById('dropdownUserEmail');
+            
+            if (currentUser.avatarUrl) {
+                avatarInitial.style.display = 'none';
+                userAvatar.style.background = 'transparent';
+                if (!userAvatar.querySelector('img')) {
+                    const img = document.createElement('img');
+                    img.src = currentUser.avatarUrl;
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    userAvatar.appendChild(img);
+                }
+            } else {
+                avatarInitial.textContent = currentUser.avatar;
+            }
+            
+            userName.textContent = currentUser.name;
+            dropdownUserName.textContent = currentUser.name;
+            dropdownUserEmail.textContent = currentUser.email;
+        }
+
+        function updateProfilePage() {
+            if (!currentUser) return;
+            
+            // Update header
+            document.getElementById('profileName').textContent = currentUser.name;
+            document.getElementById('profileEmail').textContent = currentUser.email;
+            
+            const avatarLarge = document.getElementById('profileAvatarLarge');
+            const avatarInitial = document.getElementById('profileAvatarInitial');
+            
+            if (currentUser.avatarUrl) {
+                avatarInitial.style.display = 'none';
+                if (!avatarLarge.querySelector('img')) {
+                    const img = document.createElement('img');
+                    img.src = currentUser.avatarUrl;
+                    avatarLarge.appendChild(img);
+                }
+            } else {
+                avatarInitial.textContent = currentUser.avatar;
+            }
+            
+            // Update stats
+            const daysActive = Math.max(1, Math.floor((new Date() - new Date(userStats.joined)) / (1000 * 60 * 60 * 24)));
+            document.getElementById('statQRCodes').textContent = userStats.qrCodes;
+            document.getElementById('statScans').textContent = userStats.scans;
+            document.getElementById('statTemplates').textContent = userStats.templates;
+            document.getElementById('statDays').textContent = daysActive;
+            
+            // Update overview
+            document.getElementById('overviewName').textContent = currentUser.name;
+            document.getElementById('overviewEmail').textContent = currentUser.email;
+            document.getElementById('overviewJoined').textContent = new Date(currentUser.joined).toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            
+            // Update edit form
+            document.getElementById('editName').value = currentUser.name;
+            document.getElementById('editEmail').value = currentUser.email;
+            document.getElementById('editCompany').value = currentUser.company || '';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            document.getElementById('editBio').value = currentUser.bio || '';
+            document.getElementById('editAvatarInitial').textContent = currentUser.avatar;
+            
+            // Update activity timestamps
+            const joinedTime = new Date(currentUser.joined).toLocaleString();
+            document.getElementById('activityJoined').textContent = joinedTime;
+            document.getElementById('activityCreateTime').textContent = joinedTime;
+            document.getElementById('activityLoginTime').textContent = new Date().toLocaleString();
+        }
+
+        // ====================
+        // NAVIGATION FUNCTIONS
+        // ====================
+        function showHome() {
+            document.getElementById('mainContent').style.display = 'block';
+            document.getElementById('profilePage').classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function showProfilePage() {
+            if (!currentUser) {
+                openAuthModal('login');
+                return;
+            }
+            updateProfilePage();
+            document.getElementById('mainContent').style.display = 'none';
+            document.getElementById('profilePage').classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.getElementById('profileDropdown').classList.remove('show');
+        }
+
+        function showDashboard() {
+            showToast('Dashboard coming soon!', 'info');
+        }
+
+        function showQRHistory() {
+            showToast('QR History coming soon!', 'info');
+        }
+
+        function showAnalytics() {
+            showToast('Analytics coming soon!', 'info');
+        }
+
+        function showSettings() {
+            showProfilePage();
+            showProfileSection('edit');
+        }
+
+        function showProfileSection(section) {
+            document.querySelectorAll('.profile-nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.profile-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            document.getElementById('section-' + section).classList.add('active');
+        }
+
+        // ====================
+        // HELPER FUNCTIONS
+        // ====================
+        function validateEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function simulateAuthRequest(callback) {
+            const btn = document.querySelector('.login-form.active .btn-login');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Please wait...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                callback();
+            }, 1500);
+        }
+
+        function saveUserSession(remember) {
+            const storage = remember ? localStorage : sessionStorage;
+            storage.setItem('qrUser', JSON.stringify(currentUser));
+        }
+
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = event.currentTarget.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        function showForgotPassword() {
+            switchAuthTab('forgot');
+        }
+
+        function showLogin() {
+            switchAuthTab('login');
+        }
+
+        function resetProfileForm() {
+            updateProfilePage();
+            showToast('Form reset to current values', 'info');
+        }
+
+        function showError(message) {
+            const alert = document.getElementById('errorAlert');
+            document.getElementById('errorMessage').textContent = message;
+            alert.classList.add('show');
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+
+        function showSuccess(message) {
+            showToast(message, 'success');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? '#198754' : type === 'error' ? '#dc3545' : '#0d6efd';
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+            
+            toast.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: ${bgColor};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-weight: 500;
+            `;
+            toast.innerHTML = `<i class="fas fa-${icon}"></i>${message}`;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function clearAlerts() {
+            document.querySelectorAll('.alert').forEach(alert => alert.classList.remove('show'));
+        }
+
+        function filterTemplates(e) {
+            const filter = e.target.dataset.filter;
+            
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            
+            document.querySelectorAll('.template-item').forEach(item => {
+                if (filter === 'all' || item.dataset.category === filter) {
+                    item.style.display = 'block';
+                    item.style.animation = 'fadeIn 0.5s ease';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        function selectTemplate(type) {
+            if (!currentUser) {
+                openAuthModal('signup');
+                return;
+            }
+            
+            const templates = {
+                'business': 'Digital Business Card',
+                'social': 'Social Media Hub',
+                'menu': 'Digital Menu',
+                'event': 'Event Pass',
+                'wifi': 'WiFi Access',
+                'payment': 'Payment Code',
+                'portfolio': 'Artist Portfolio',
+                'app': 'App Download'
+            };
+            
+            showSuccess(`Opening ${templates[type]} template...`);
+        }
+
+        function handleScroll() {
+            const navbar = document.querySelector('.navbar');
+            const scrollTop = document.getElementById('scrollTop');
+            
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            
+            if (window.scrollY > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        }
+
+        // Add fadeOut animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from { opacity: 1; transform: translateX(0); }
+                to { opacity: 0; transform: translateX(20px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

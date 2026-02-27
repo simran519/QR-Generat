@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Paste Karo → QR Code Banao</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap">
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      background-color: white;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+      font-size: 2.5rem;
+    }
+
+    h1 span {
+      color: #4a6cf7;
+      position: relative;
+    }
+
+    h1 span::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #4a6cf7, #9a4dff);
+      border-radius: 2px;
+    }
+
+    .box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      margin-top: 20px;
+    }
+
+    .left, .right {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 250px;
+      padding: 20px;
+      border: 2px solid #e1e5ee;
+      border-radius: 12px;
+      font-size: 16px;
+      resize: none;
+      transition: all 0.3s;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #4a6cf7;
+      box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+    }
+
+    button {
+      background: linear-gradient(90deg, #4a6cf7, #9a4dff);
+      color: white;
+      border: none;
+      padding: 16px 30px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(74, 108, 247, 0.3);
+    }
+
+    button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(74, 108, 247, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .right {
+      background-color: #f8f9ff;
+      border-radius: 16px;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 25px;
+    }
+
+    .right h3 {
+      color: #333;
+      font-size: 24px;
+      text-align: center;
+    }
+
+    #qrcode {
+      width: 250px;
+      height: 250px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    #qrcode img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 8px;
+    }
+
+    .options {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .color-section, .logo-section {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .color-section label, .logo-section label {
+      font-weight: 600;
+      color: #444;
+    }
+
+    .color-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .color-option {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: transform 0.2s;
+      border: 3px solid transparent;
+    }
+
+    .color-option:hover {
+      transform: scale(1.1);
+    }
+
+    .color-option.active {
+      border-color: #4a6cf7;
+      transform: scale(1.1);
+    }
+
+    .logo-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo-option {
+      width: 50px;
+      height: 50px;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background-color: white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .logo-option:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
+
+    .logo-option.active {
+      background-color: #eef2ff;
+      border: 2px solid #4a6cf7;
+    }
+
+    .logo-option i {
+      font-size: 24px;
+    }
+
+    .youtube { color: #FF0000; }
+    .facebook { color: #1877F2; }
+    .telegram { color: #0088cc; }
+    .linkedin { color: #0A66C2; }
+    .instagram { 
+      background: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .twitter { color: #1DA1F2; }
+    .whatsapp { color: #25D366; }
+
+    .custom-color {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    #color {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .download {
+      width: 100%;
+      background: linear-gradient(90deg, #00b09b, #96c93d);
+      margin-top: 10px;
+    }
+
+    .logo-preview {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #666;
+      text-align: center;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    /* New styles for upload section */
+    .upload-section {
+      background-color: #f8f9ff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 10px;
+      border: 2px dashed #c3cfe2;
+    }
+
+    .upload-section h4 {
+      color: #4a6cf7;
+      margin-bottom: 15px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .upload-section h4 i {
+      font-size: 20px;
+    }
+
+    .upload-options {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .upload-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 20px;
+      background: linear-gradient(90deg, #6a89cc, #4a69bd);
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+      flex: 1;
+      min-width: 150px;
+      justify-content: center;
+    }
+
+    .upload-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(106, 137, 204, 0.3);
+    }
+
+    .upload-btn i {
+      font-size: 18px;
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    .uploaded-file-info {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: white;
+      border-radius: 8px;
+      border-left: 4px solid #4a6cf7;
+      display: none;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .file-icon {
+      font-size: 24px;
+      color: #4a6cf7;
+    }
+
+    .file-details {
+      flex: 1;
+    }
+
+    .file-name {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 3px;
+    }
+
+    .file-size {
+      font-size: 12px;
+      color: #777;
+    }
+
+    .remove-file {
+      background: none;
+      border: none;
+      color: #ff4757;
+      cursor: pointer;
+      font-size: 18px;
+      padding: 5px;
+    }
+
+    .generate-file-qr {
+      margin-top: 10px;
+      width: 100%;
+      background: linear-gradient(90deg, #ff7e5f, #feb47b);
+    }
+
+    @media (max-width: 768px) {
+      .box {
+        flex-direction: column;
+      }
+      
+      .container {
+        padding: 25px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .upload-options {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Paste Karo → <span>QR Code Banao!</span></h1>
+
+  <div class="box">
+    <!-- LEFT -->
+    <div class="left">
+      <textarea id="text" placeholder="Paste your link or text here..."></textarea>
+      <button onclick="generateQR()">Generate QR Code <i class="fas fa-qrcode"></i></button>
+      
+      <!-- New Upload Section -->
+      <div class="upload-section">
+        <h4><i class="fas fa-cloud-upload-alt"></i> Upload PDF or Image</h4>
+        <div class="upload-options">
+          <div class="upload-btn" onclick="openFilePicker('pdf')">
+            <i class="fas fa-file-pdf"></i> Upload PDF
+          </div>
+          <div class="upload-btn" onclick="openFilePicker('image')">
+            <i class="fas fa-file-image"></i> Upload Image
+          </div>
+        </div>
+        
+        <input type="file" id="fileInput" accept=".pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp">
+        
+        <div class="uploaded-file-info" id="uploadedFileInfo">
+          <div class="file-info">
+            <div class="file-icon">
+              <i class="fas fa-file" id="fileIcon"></i>
+            </div>
+            <div class="file-details">
+              <div class="file-name" id="fileName"></div>
+              <div class="file-size" id="fileSize"></div>
+            </div>
+            <button class="remove-file" onclick="removeUploadedFile()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <button class="generate-file-qr" onclick="generateFileQR()">
+            Generate QR for File <i class="fas fa-qrcode"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="logo-section">
+        <label>Add Logo to QR Code:</label>
+        <div class="logo-options">
+          <div class="logo-option" data-logo="youtube" onclick="selectLogo('youtube')">
+            <i class="fab fa-youtube youtube"></i>
+          </div>
+          <div class="logo-option" data-logo="facebook" onclick="selectLogo('facebook')">
+            <i class="fab fa-facebook facebook"></i>
+          </div>
+          <div class="logo-option" data-logo="telegram" onclick="selectLogo('telegram')">
+            <i class="fab fa-telegram telegram"></i>
+          </div>
+          <div class="logo-option" data-logo="linkedin" onclick="selectLogo('linkedin')">
+            <i class="fab fa-linkedin linkedin"></i>
+          </div>
+          <div class="logo-option" data-logo="instagram" onclick="selectLogo('instagram')">
+            <i class="fab fa-instagram instagram"></i>
+          </div>
+          <div class="logo-option" data-logo="twitter" onclick="selectLogo('twitter')">
+            <i class="fab fa-twitter twitter"></i>
+          </div>
+          <div class="logo-option" data-logo="whatsapp" onclick="selectLogo('whatsapp')">
+            <i class="fab fa-whatsapp whatsapp"></i>
+          </div>
+          <div class="logo-option" data-logo="none" onclick="selectLogo('none')">
+            <i class="fas fa-times"></i>
+          </div>
+        </div>
+        <div class="logo-preview" id="logoPreview">No logo selected</div>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="right">
+      <h3>Your QR Code</h3>
+      <div id="qrcode"></div>
+
+      <div class="options">
+        <div class="color-section">
+          <label>QR Code Color:</label>
+          <div class="color-options">
+            <div class="color-option active" style="background-color: #000000;" onclick="selectColor('#000000')"></div>
+            <div class="color-option" style="background-color: #4a6cf7;" onclick="selectColor('#4a6cf7')"></div>
+            <div class="color-option" style="background-color: #ff4757;" onclick="selectColor('#ff4757')"></div>
+            <div class="color-option" style="background-color: #2ed573;" onclick="selectColor('#2ed573')"></div>
+            <div class="color-option" style="background-color: #ffa502;" onclick="selectColor('#ffa502')"></div>
+            <div class="color-option" style="background-color: #9a4dff;" onclick="selectColor('#9a4dff')"></div>
+            <div class="color-option" style="background-color: #00d2d3;" onclick="selectColor('#00d2d3')"></div>
+            <div class="color-option" style="background-color: #ff6b81;" onclick="selectColor('#ff6b81')"></div>
+          </div>
+          <div class="custom-color">
+            <label>Custom Color:</label>
+            <input type="color" id="color" value="#000000" onchange="selectCustomColor(this.value)">
+          </div>
+        </div>
+      </div>
+
+      <button onclick="downloadQR()" class="download">Download QR Code <i class="fas fa-download"></i></button>
+    </div>
+  </div>
+  
+  <div class="footer">
+    <p>Made with ❤️ | QR Code Generator with File Upload & Logo Support</p>
+  </div>
+</div>
+
+<script>
+  // Global variables
+  let selectedColor = "#000000";
+  let selectedLogo = "none";
+  let currentQRCode = null;
+  let uploadedFile = null;
+  let fileObjectURL = null;
+  
+  // Initialize with a default QR code
+  document.addEventListener('DOMContentLoaded', function() {
+    generateQR();
+  });
+  
+  // Function to generate QR code
+  function generateQR() {
+    const text = document.getElementById("text").value.trim();
+    const qrcodeElement = document.getElementById("qrcode");
+    
+    if (!text) {
+      alert("Please enter some text or a URL to generate QR code!");
+      return;
+    }
+    
+    // Clear previous QR code
+    qrcodeElement.innerHTML = "";
+    
+    // Generate new QR code
+    currentQRCode = new QRCode(qrcodeElement, {
+      text: text,
+      width: 220,
+      height: 220,
+      colorDark: selectedColor,
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    
+    // Add logo if selected
+    setTimeout(() => {
+      addLogoToQR();
+    }, 300);
+  }
+  
+  // Function to select color
+  function selectColor(color) {
+    selectedColor = color;
+    
+    // Update color picker value
+    document.getElementById("color").value = color;
+    
+    // Update active color button
+    document.querySelectorAll(".color-option").forEach(option => {
+      option.classList.remove("active");
+    });
+    
+    event.target.classList.add("active");
+    
+    // Regenerate QR with new color
+    if (document.getElementById("text").value.trim()) {
+      generateQR();
+    }
+  }
+  
+  // Function to select custom color
+  function selectCustomColor(color) {
+    selectedColor = color;
+    
+    // Update active color button
+    document.querySelectorAll(".color-option").forEach(option => {
+      option.classList.remove("active");
+    });
+    
+    // Regenerate QR with new color
+    if (document.getElementById("text").value.trim()) {
+      generateQR();
+    }
+  }
+  
+  // Function to select logo
+  function selectLogo(logo) {
+    selectedLogo = logo;
+    
+    // Update active logo button
+    document.querySelectorAll(".logo-option").forEach(option => {
+      option.classList.remove("active");
+    });
+    
+    event.target.closest(".logo-option").classList.add("active");
+    
+    // Update logo preview
+    const logoPreview = document.getElementById("logoPreview");
+    if (logo === "none") {
+      logoPreview.textContent = "No logo selected";
+    } else {
+      logoPreview.innerHTML = `<i class="fab fa-${logo}"></i> ${logo.charAt(0).toUpperCase() + logo.slice(1)} logo will be added to QR code`;
+    }
+    
+    // Regenerate QR with new logo
+    if (document.getElementById("text").value.trim() || uploadedFile) {
+      if (uploadedFile) {
+        generateFileQR();
+      } else {
+        generateQR();
+      }
+    }
+  }
+  
+  // Function to add logo to QR code
+  function addLogoToQR() {
+    if (selectedLogo === "none") return;
+    
+    const qrcodeElement = document.getElementById("qrcode");
+    const qrImage = qrcodeElement.querySelector("img");
+    
+    if (!qrImage) return;
+    
+    // Create a canvas to draw QR code with logo
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    
+    // Set canvas dimensions
+    canvas.width = 220;
+    canvas.height = 220;
+    
+    // Load QR image
+    const qrImg = new Image();
+    qrImg.crossOrigin = "anonymous";
+    qrImg.src = qrImage.src;
+    
+    qrImg.onload = function() {
+      // Draw QR code on canvas
+      ctx.drawImage(qrImg, 0, 0, 220, 220);
+      
+      // Draw logo in the center
+      const logoSize = 40;
+      const centerX = 220 / 2 - logoSize / 2;
+      const centerY = 220 / 2 - logoSize / 2;
+      
+      // Create logo background (white circle)
+      ctx.beginPath();
+      ctx.arc(110, 110, logoSize/2 + 5, 0, Math.PI * 2);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+      
+      // Draw logo based on selection
+      ctx.font = `${logoSize}px FontAwesome`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      
+      // Set logo color
+      let logoColor = "#000000";
+      let logoChar = "";
+      
+      switch(selectedLogo) {
+        case "youtube":
+          logoColor = "#FF0000";
+          logoChar = "";
+          break;
+        case "facebook":
+          logoColor = "#1877F2";
+          logoChar = "";
+          break;
+        case "telegram":
+          logoColor = "#0088cc";
+          logoChar = "";
+          break;
+        case "linkedin":
+          logoColor = "#0A66C2";
+          logoChar = "";
+          break;
+        case "instagram":
+          // Instagram gradient
+          const gradient = ctx.createLinearGradient(90, 90, 130, 130);
+          gradient.addColorStop(0, "#405DE6");
+          gradient.addColorStop(0.2, "#5851DB");
+          gradient.addColorStop(0.4, "#833AB4");
+          gradient.addColorStop(0.6, "#C13584");
+          gradient.addColorStop(0.8, "#E1306C");
+          gradient.addColorStop(1, "#FD1D1D");
+          ctx.fillStyle = gradient;
+          logoChar = "";
+          break;
+        case "twitter":
+          logoColor = "#1DA1F2";
+          logoChar = "";
+          break;
+        case "whatsapp":
+          logoColor = "#25D366";
+          logoChar = "";
+          break;
+      }
+      
+      if (selectedLogo !== "instagram") {
+        ctx.fillStyle = logoColor;
+      }
+      
+      ctx.fillText(logoChar, 110, 110);
+      
+      // Replace QR image with canvas image
+      qrImage.src = canvas.toDataURL("image/png");
+    };
+  }
+  
+  // Function to download QR code
+  function downloadQR() {
+    const qrcodeElement = document.getElementById("qrcode");
+    const qrImage = qrcodeElement.querySelector("img");
+    
+    if (!qrImage) {
+      alert("Please generate a QR code first!");
+      return;
+    }
+    
+    // Create a temporary link for download
+    const link = document.createElement("a");
+    link.href = qrImage.src;
+    link.download = `QR-Code-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+  
+  // NEW FUNCTIONS FOR FILE UPLOAD
+  
+  // Function to open file picker
+  function openFilePicker(type) {
+    const fileInput = document.getElementById('fileInput');
+    
+    if (type === 'pdf') {
+      fileInput.accept = '.pdf';
+    } else if (type === 'image') {
+      fileInput.accept = '.jpg,.jpeg,.png,.gif,.bmp,.webp';
+    } else {
+      fileInput.accept = '.pdf,.jpg,.jpeg,.png,.gif,.bmp,.webp';
+    }
+    
+    fileInput.click();
+    
+    fileInput.onchange = function(e) {
+      if (e.target.files.length > 0) {
+        handleFileUpload(e.target.files[0]);
+      }
+    };
+  }
+  
+  // Function to handle file upload
+  function handleFileUpload(file) {
+    // Clean up previous file object URL if exists
+    if (fileObjectURL) {
+      URL.revokeObjectURL(fileObjectURL);
+    }
+    
+    uploadedFile = file;
+    fileObjectURL = URL.createObjectURL(file);
+    
+    // Display file info
+    const fileInfo = document.getElementById('uploadedFileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const fileIcon = document.getElementById('fileIcon');
+    
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+    
+    // Set appropriate icon
+    if (file.type.includes('pdf')) {
+      fileIcon.className = 'fas fa-file-pdf';
+      fileIcon.style.color = '#FF0000';
+    } else if (file.type.includes('image')) {
+      fileIcon.className = 'fas fa-file-image';
+      fileIcon.style.color = '#4a6cf7';
+    } else {
+      fileIcon.className = 'fas fa-file';
+      fileIcon.style.color = '#4a6cf7';
+    }
+    
+    fileInfo.style.display = 'block';
+    
+    // Clear text area since we're using file
+    document.getElementById('text').value = '';
+    
+    // Auto-generate QR for the file
+    setTimeout(() => {
+      generateFileQR();
+    }, 500);
+  }
+  
+  // Function to format file size
+  function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  }
+  
+  // Function to remove uploaded file
+  function removeUploadedFile() {
+    if (fileObjectURL) {
+      URL.revokeObjectURL(fileObjectURL);
+    }
+    
+    uploadedFile = null;
+    fileObjectURL = null;
+    
+    document.getElementById('uploadedFileInfo').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    
+    // Clear QR code
+    document.getElementById('qrcode').innerHTML = '';
+  }
+  
+  // Function to generate QR code for uploaded file
+  function generateFileQR() {
+    if (!uploadedFile) {
+      alert("Please upload a file first!");
+      return;
+    }
+    
+    const qrcodeElement = document.getElementById("qrcode");
+    
+    // Clear previous QR code
+    qrcodeElement.innerHTML = "";
+    
+    // Generate QR code with the file object URL
+    currentQRCode = new QRCode(qrcodeElement, {
+      text: fileObjectURL,
+      width: 220,
+      height: 220,
+      colorDark: selectedColor,
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    
+    // Add logo if selected
+    setTimeout(() => {
+      addLogoToQR();
+    }, 300);
+    
+    // Update text area with file info
+    document.getElementById('text').value = `File: ${uploadedFile.name} (${formatFileSize(uploadedFile.size)})`;
+  }
+</script>
+</body>
+</html>
